@@ -91,6 +91,11 @@ class QueryCollector extends PDOCollector
         $hints = $this->performQueryAnalysis($query);
 
         $pdo = $connection->getPdo();
+        // Try to get a default PDO if the current connection didn't return one.
+        if (!$pdo) {
+            $pdo = app('db.connection')->getPdo();
+        }
+
         $bindings = $connection->prepareBindings($bindings);
 
         // Run EXPLAIN on this query (if needed)
@@ -101,7 +106,7 @@ class QueryCollector extends PDOCollector
         }
 
         $bindings = $this->getDataFormatter()->checkBindings($bindings);
-        if (!empty($bindings) && $this->renderSqlWithParams) {
+        if (!empty($bindings) && $this->renderSqlWithParams && $pdo) {
             foreach ($bindings as $key => $binding) {
                 // This regex matches placeholders only, not the question marks,
                 // nested in quotes, while we iterate through the bindings
