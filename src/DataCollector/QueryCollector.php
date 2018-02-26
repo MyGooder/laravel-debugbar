@@ -101,7 +101,7 @@ class QueryCollector extends PDOCollector
         }
 
         $bindings = $this->getDataFormatter()->checkBindings($bindings);
-        if (!empty($bindings) && $this->renderSqlWithParams) {
+        if (!empty($bindings) && $this->renderSqlWithParams && $pdo) {
             foreach ($bindings as $key => $binding) {
                 // This regex matches placeholders only, not the question marks,
                 // nested in quotes, while we iterate through the bindings
